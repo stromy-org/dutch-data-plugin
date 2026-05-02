@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "nl-gov-data": {
+      "type": "http",
+      "url": "https://nl-gov-data.fastmcp.app/mcp"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "slug": "nl-ez",
+  "approved_at": "2026-05-02T01:10:00+00:00",
+  "approved_by": "william.masquelier@stromy.com.au",
+  "source": "_build/brand-intelligence/nl-ez/",
+  "target": "client-data/clients/nl-ez/",
+  "tier": "output",
+  "assets": {
+    "logos": ["logos/logo.svg", "logos/logo-wordmark.svg", "logos/logo-mark-alt.svg"],
+    "fonts": ["fonts/RO-SansWebText-Regular.woff2", "fonts/RO-SansWebText-Bold.woff2", "fonts/RO-SansWebText-Italic.woff2", "fonts/RO-SerifWeb-Regular.woff2", "fonts/RO-SerifWeb-Italic.woff2"],
+    "images": ["images/photo-cover-01.jpg", "images/photo-cover-02.jpg", "images/photo-section-01.png", "images/photo-section-02.jpg", "images/photo-section-03.jpg", "images/photo-section-04.jpg"]
+  },
+  "provenance_sidecar": "../assets.json"
+}

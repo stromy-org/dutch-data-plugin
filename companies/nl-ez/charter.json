@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "slug": "nl-ez",
+    "name": "Ministerie van Economische Zaken en Klimaat",
+    "short_name": "EZK",
+    "tagline": "De Rijksoverheid. Voor Nederland.",
+    "domain": "rijksoverheid.nl",
+    "industry": "Government / Economic Policy",
+    "tier": "output",
+    "brand_system": "Rijkshuisstijl (Dutch Government House Style)"
+  },
+  "colors": {
+    "primary": "#154273",
+    "secondary": "#01689b",
+    "accent": "#ffb612",
+    "error": "#c63c2c",
+    "text": "#1D1D1B",
+    "text_body": "#333333",
+    "text_meta": "#535353",
+    "background": "#FFFFFF",
+    "surface": "#f3f3f3",
+    "border": "#e6e6e6",
+    "white": "#FFFFFF"
+  },
+  "typography": {
+    "heading": {
+      "family": "RO Sans",
+      "fallback": ["Calibri", "Arial", "Verdana", "sans-serif"],
+      "weight": 700,
+      "style": "normal"
+    },
+    "body": {
+      "family": "RO Sans",
+      "fallback": ["Calibri", "Arial", "Verdana", "sans-serif"],
+      "weight": 400,
+      "style": "normal"
+    },
+    "serif": {
+      "family": "RO Serif",
+      "fallback": ["Georgia", "Times New Roman", "serif"],
+      "weight": 400,
+      "style": "normal",
+      "notes": "Use for formal document body text, long-form reports"
+    },
+    "fonts_available": [
+      "fonts/RO-SansWebText-Regular.woff2",
+      "fonts/RO-SansWebText-Bold.woff2",
+      "fonts/RO-SansWebText-Italic.woff2",
+      "fonts/RO-SerifWeb-Regular.woff2",
+      "fonts/RO-SerifWeb-Italic.woff2"
+    ]
+  },
+  "logos": {
+    "primary": "logos/logo.svg",
+    "wordmark": "logos/logo-wordmark.svg",
+    "mark_alt": "logos/logo-mark-alt.svg",
+    "description": "Coat of arms (crowned lion) on Rijksblauw (#154273) vertical banner. The blue background is baked into the SVG. The wordmark variant adds 'Rijksoverheid' text in #1D1D1B."
+  },
+  "presentation": {
+    "aspectRatio": "16:9",
+    "slideMargin": "40pt",
+    "titleMargin": "60pt",
+    "contentMargin": "40pt",
+    "primaryBackground": "#FFFFFF",
+    "accentBackground": "#154273",
+    "linkColor": "#01689b"
+  },
+  "images": {
+    "overlay": { "color": "#154273", "opacity": 0.55 },
+    "logoVariantOnImage": "primary",
+    "catalog": [
+      { "file": "images/photo-cover-01.jpg", "roles": ["cover"], "mood": "bold", "orientation": "landscape", "notes": "Sustainable energy hero — best quality (310K)" },
+      { "file": "images/photo-cover-02.jpg", "roles": ["cover"], "mood": "bold", "orientation": "landscape", "notes": "Solar panels — EZK ministry hero" },
+      { "file": "images/photo-section-01.png", "roles": ["section"], "mood": "policy", "orientation": "landscape", "notes": "EU/Europe policy graphic" },
+      { "file": "images/photo-section-02.jpg", "roles": ["section"], "mood": "industrial", "orientation": "landscape", "notes": "Maasvlakte industrial port 2025" },
+      { "file": "images/photo-section-03.jpg", "roles": ["section"], "mood": "editorial", "orientation": "landscape", "notes": "EZK ministry overview editorial" },
+      { "file": "images/photo-section-04.jpg", "roles": ["section"], "mood": "human", "orientation": "landscape", "notes": "Residential/consumer energy" }
+    ]
+  }
+}

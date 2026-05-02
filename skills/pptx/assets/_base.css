@@ -1,0 +1,39 @@
+:root {
+  --color-primary: {{colors.primary}};
+  --color-secondary: {{colors.secondary}};
+  --color-accent: {{colors.accent}};
+  --color-background: {{colors.background}};
+  --color-background-alt: {{colors.backgroundAlt}};
+  --color-text: {{colors.text}};
+  --color-text-light: {{colors.textLight}};
+  --font-heading: {{fonts.heading.family}}, {{fonts.heading.fallback}};
+  --font-body: {{fonts.body.family}}, {{fonts.body.fallback}};
+  --slide-margin: {{presentation.slideMargin}};
+  --title-margin: {{presentation.titleMargin}};
+  --content-margin: {{presentation.contentMargin}};
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 720pt;
+  height: 405pt;
+  overflow: hidden;
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+ul, ol {
+  margin: 0;
+  padding-left: 20pt;
+}

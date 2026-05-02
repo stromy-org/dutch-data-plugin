@@ -1,0 +1,32 @@
+{
+  "plugin_name": "DutchDataPlugin",
+  "plugin_slug": "dutch-data",
+  "client_name": "Ministerie van Economische Zaken en Klimaat",
+  "client_slug": "nl-ez",
+  "target_dir": "/Users/williammasquelier/Repositories/stromy-org/clients/nl-ez/dutch-data-plugin",
+  "skills_copied": [
+    "pdf",
+    "docx",
+    "pptx",
+    "pptx-hd",
+    "dutch-gov-data",
+    "mermaid"
+  ],
+  "company_data_copied": false,
+  "workspace_utils_copied": [
+    "src/workspace.js",
+    "src/workspace.py"
+  ],
+  "template_variables": {
+    "client_name": "Ministerie van Economische Zaken en Klimaat",
+    "client_slug": "nl-ez",
+    "plugin_slug": "dutch-data",
+    "plugin_name": "DutchDataPlugin",
+    "github_org": "stromy-org",
+    "plugin_repo_name": "dutch-data-plugin",
+    "version": "0.1.0",
+    "description": "Claude Code plugin combining Dutch government data access with branded document output",
+    "date": "2026-05-02"
+  },
+  "date": "2026-05-02"
+}

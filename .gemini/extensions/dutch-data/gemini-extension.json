@@ -1,0 +1,8 @@
+{
+  "name": "dutch-data",
+  "version": "0.1.0",
+  "description": "Claude Code plugin combining Dutch government data access with branded document output",
+  "contextFileName": "GEMINI.md",
+  "mcpServers": {},
+  "_note": "Gemini extension manifest. Skills under ../../skills/ are auto-discovered. Commands under ../../commands/ load if present. MCP servers come from the host repo's .agents/mcp.json \u2014 do not duplicate here."
+}

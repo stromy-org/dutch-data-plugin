@@ -1,0 +1,5 @@
+# License and IP-protection files require owner approval to modify or delete
+LICENSE @WilliamMasquelier
+.github/CODEOWNERS @WilliamMasquelier
+.claude-plugin/plugin.json @WilliamMasquelier
+skills/*/LICENSE.txt @WilliamMasquelier

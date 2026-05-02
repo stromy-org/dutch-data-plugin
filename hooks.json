@@ -1,0 +1,9 @@
+{
+  "hooks": [
+    {
+      "event": "SessionStart",
+      "type": "command",
+      "command": "test -d ${CLAUDE_PLUGIN_ROOT}/node_modules || echo '{\"message\": \"Plugin dependencies not installed. Run: cd $(dirname ${CLAUDE_PLUGIN_ROOT}) && npm install\"}'"
+    }
+  ]
+}
