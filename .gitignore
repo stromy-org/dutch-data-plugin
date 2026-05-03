@@ -1,21 +1,11 @@
-# Dependencies
 node_modules/
+.venv/
 __pycache__/
 *.pyc
-.venv/
-
-# Output
-output/
-out/
-
-# OS
 .DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-
-# Temp
-*.tmp
-*.log
+_output/
+_build/
+*.egg-info/
+dist/
+build/
+.env

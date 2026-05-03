@@ -1,0 +1,15 @@
+# Changes here will be overwritten by Copier; DO NOT edit manually.
+_commit: 9d12ebe
+_src_path: ../claude-plugin-template
+client_name: Dutch Data
+client_slug: dutch-data
+description: Claude Code plugin for Dutch Data branded deliverables
+github_org: stromy-org
+include_mcp: true
+include_node: true
+include_python: true
+mcp_server_name: ''
+mcp_transport: http
+mcp_url: kebab-case marketplace identifier (used as repo name)
+plugin_name: Dutch Data Plugin
+plugin_slug: dutch-data-plugin

@@ -1,16 +1,6 @@
 [project]
-name = "dutch-data"
+name = "dutch-data-plugin"
 version = "0.1.0"
-description = "Claude Code plugin combining Dutch government data access with branded document output"
+description = "Claude Code plugin for Dutch Data branded deliverables"
 requires-python = ">=3.11"
-dependencies = [
-    "Pillow>=10.0",
-    "defusedxml>=0.7",
-    "lxml>=5.0",
-    "pdf2image>=1.16",
-    "pdfplumber>=0.10",
-    "pypdf>=4.0",
-    "pypdfium2>=4.0",
-    "python-pptx>=0.6",
-    "reportlab>=4.0",
-]
+dependencies = []

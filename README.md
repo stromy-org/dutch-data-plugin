@@ -1,79 +1,41 @@
-# DutchDataPlugin
+# Dutch Data Plugin
 
-Claude Code plugin for producing branded deliverables for Ministerie van Economische Zaken en Klimaat.
-
-## Skills Included
-
-| Skill | Command | Description |
-|-------|---------|-------------|
-| pdf | `/dutch-data:pdf` | Create branded PDFs |
-| docx | `/dutch-data:docx` | Create branded documents |
-| pptx | `/dutch-data:pptx` | Create branded presentations |
-| pptx-hd | `/dutch-data:pptx-hd` | pptx-hd |
-| dutch-gov-data | `/dutch-data:dutch-gov-data` | dutch-gov-data |
-| mermaid | `/dutch-data:mermaid` | Mermaid diagram generation |
+Claude Code plugin for Dutch Data branded deliverables
 
 ## Installation
 
-### Prerequisites
+```bash
+claude plugin add stromy-org/dutch-data-plugin
+```
 
-- Claude Code v2.1.49+ (with plugin support)
-- Node.js 18+
-- Python 3.11+ with [uv](https://docs.astral.sh/uv/) (for xlsx/pdf scripts)
-
-### Setup
-
-1. Add the private marketplace:
-   ```
-   /plugin marketplace add stromy-org/client-plugins-marketplace
-   ```
-
-2. Install the plugin:
-   ```
-   /plugin install dutch-data@stromy-org/client-plugins-marketplace
-   ```
-
-3. Install dependencies (first time only):
-   ```bash
-   cd ~/.claude/plugins/cache/dutch-data
-   npm install
-   uv sync
-   ```
-
-### Local Development
+Or for local development:
 
 ```bash
-claude --plugin-dir /path/to/dutch-data-plugin
+git clone https://github.com/stromy-org/dutch-data-plugin.git
+cd dutch-data-plugin
+claude --plugin-dir .
 ```
 
-## Usage
+Dependencies are automatically installed on first session start via the `hooks/hooks.json` SessionStart hook.
 
-Start Claude Code in any project directory and use the plugin skills:
+## What's Included
 
-- All output uses Ministerie van Economische Zaken en Klimaat branding (colors, fonts, logo) automatically
-- Skills are accessed as `/dutch-data:<skill-name>`
+### Skills
 
-## Company Data
+| Skill | Description |
+|-------|-------------|
+| `example` | Example skill — replace with actual skills |
 
-Brand data is in `companies/nl-ez/brand/charter.json` and includes:
-- Color palette (primary, secondary, accent)
-- Typography (heading, body, monospace fonts)
-- Logo files and paths
+### MCP Servers
 
-## Updating
+| Server | Transport | Description |
+|--------|-----------|-------------|
+| `` | http | Connected data source |
 
-```
-/plugin update dutch-data
-```
+### Company Data
 
-Or pull the latest version:
-```bash
-cd ~/.claude/plugins/cache/dutch-data
-git pull
-npm install
-uv sync
-```
+Brand and company data for Dutch Data lives in `companies/dutch-data/`.
 
-## Version History
+## License
 
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+UNLICENSED — See [LICENSE](LICENSE) for terms.
