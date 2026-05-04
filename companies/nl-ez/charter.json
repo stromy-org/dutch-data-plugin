@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "slug": "nl-ez",
+    "name": "Ministerie van Economische Zaken en Klimaat",
+    "short_name": "EZK",
+    "tagline": "De Rijksoverheid. Voor Nederland.",
+    "domain": "rijksoverheid.nl",
+    "industry": "Government / Economic Policy",
+    "tier": "output",
+    "brand_system": "Rijkshuisstijl (Dutch Government House Style)",
+    "created_at": "2026-05-02"
+  },
+  "colors": {
+    "primary": "#154273",
+    "secondary": "#01689b",
+    "accent": "#ffb612",
+    "error": "#c63c2c",
+    "text": "#1D1D1B",
+    "text_body": "#333333",
+    "text_meta": "#535353",
+    "background": "#FFFFFF",
+    "surface": "#f3f3f3",
+    "border": "#e6e6e6",
+    "white": "#FFFFFF"
+  },
+  "fonts": {
+    "heading": {
+      "family": "RO Sans",
+      "fallback": ["Calibri", "Arial", "Verdana", "sans-serif"],
+      "weight": 700
+    },
+    "body": {
+      "family": "RO Sans",
+      "fallback": ["Calibri", "Arial", "Verdana", "sans-serif"],
+      "weight": 400
+    },
+    "serif": {
+      "family": "RO Serif",
+      "fallback": ["Georgia", "Times New Roman", "serif"],
+      "weight": 400,
+      "notes": "Use for formal reports and long-form body text"
+    },
+    "files": {
+      "ro-sans-regular": "fonts/RO-SansWebText-Regular.woff2",
+      "ro-sans-bold": "fonts/RO-SansWebText-Bold.woff2",
+      "ro-sans-italic": "fonts/RO-SansWebText-Italic.woff2",
+      "ro-serif-regular": "fonts/RO-SerifWeb-Regular.woff2",
+      "ro-serif-italic": "fonts/RO-SerifWeb-Italic.woff2"
+    }
+  },
+  "logo": {
+    "primary": "logos/logo.svg",
+    "wordmark": "logos/logo-wordmark.svg",
+    "mark_alt": "logos/logo-mark-alt.svg",
+    "description": "Dutch coat of arms (crowned lion) on Rijksblauw (#154273) vertical banner. Blue background is baked into the SVG. Use logo-wordmark.svg for document headers and title slides."
+  },
+  "presentation": {
+    "aspectRatio": "16:9",
+    "slideMargin": "40pt",
+    "titleMargin": "60pt",
+    "contentMargin": "40pt",
+    "primaryBackground": "#FFFFFF",
+    "accentBackground": "#154273",
+    "linkColor": "#01689b"
+  },
+  "images": {
+    "overlay": { "color": "#154273", "opacity": 0.55 },
+    "logoVariantOnImage": "primary",
+    "catalog": [
+      { "file": "images/photo-cover-01.jpg",   "roles": ["cover"],   "mood": "bold",       "orientation": "landscape" },
+      { "file": "images/photo-cover-02.jpg",   "roles": ["cover"],   "mood": "bold",       "orientation": "landscape" },
+      { "file": "images/photo-section-01.png", "roles": ["section"], "mood": "policy",     "orientation": "landscape" },
+      { "file": "images/photo-section-02.jpg", "roles": ["section"], "mood": "industrial", "orientation": "landscape" },
+      { "file": "images/photo-section-03.jpg", "roles": ["section"], "mood": "editorial",  "orientation": "landscape" },
+      { "file": "images/photo-section-04.jpg", "roles": ["section"], "mood": "human",      "orientation": "landscape" }
+    ]
+  },
+  "pptxAssets": {
+    "gradients": {
+      "dark":   "pptx-assets/gradient-dark.png",
+      "accent": "pptx-assets/gradient-accent.png",
+      "light":  "pptx-assets/gradient-light.png"
+    },
+    "overlays": {
+      "cover-01":   "pptx-assets/overlays/photo-cover-01-overlay.jpg",
+      "cover-02":   "pptx-assets/overlays/photo-cover-02-overlay.jpg",
+      "section-01": "pptx-assets/overlays/photo-section-01-overlay.jpg",
+      "section-02": "pptx-assets/overlays/photo-section-02-overlay.jpg",
+      "section-03": "pptx-assets/overlays/photo-section-03-overlay.jpg",
+      "section-04": "pptx-assets/overlays/photo-section-04-overlay.jpg"
+    }
+  }
+}

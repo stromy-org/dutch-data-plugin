@@ -1,0 +1,33 @@
+:root {
+  /* ── Rijksoverheid / EZK brand tokens ── */
+
+  /* Colors */
+  --color-primary:        #154273;  /* Rijksblauw */
+  --color-secondary:      #01689b;  /* Interactive blue — links, CTAs */
+  --color-accent:         #ffb612;  /* Amber — Dutch gold, alert accent */
+  --color-error:          #c63c2c;  /* Error / warning red */
+
+  --color-text:           #1D1D1B;  /* Near-black — wordmark, headings */
+  --color-text-body:      #333333;  /* Body text */
+  --color-text-meta:      #535353;  /* Captions, timestamps */
+  --color-text-on-dark:   #FFFFFF;  /* Text on primary/dark backgrounds */
+
+  --color-background:     #FFFFFF;
+  --color-surface:        #f3f3f3;  /* Panel / table backgrounds */
+  --color-border:         #e6e6e6;
+
+  --color-white:          #FFFFFF;
+
+  /* Typography */
+  --font-heading: 'RO Sans', Calibri, Arial, Verdana, sans-serif;
+  --font-body:    'RO Sans', Calibri, Arial, Verdana, sans-serif;
+  --font-serif:   'RO Serif', Georgia, 'Times New Roman', serif;
+
+  --font-weight-regular: 400;
+  --font-weight-bold:    700;
+
+  /* Presentation */
+  --slide-margin:  40pt;
+  --title-margin:  60pt;
+  --content-margin: 40pt;
+}

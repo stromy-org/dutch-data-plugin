@@ -1,0 +1,60 @@
+{
+  "overlay": { "color": "#154273", "opacity": 0.55 },
+  "logoVariantOnImage": "primary",
+  "images": [
+    {
+      "file": "photo-cover-01.jpg",
+      "roles": ["cover"],
+      "mood": "bold",
+      "orientation": "landscape",
+      "source_url": "https://www.rijksoverheid.nl/binaries/widescreen/content/gallery/rijksoverheid/attentie-afbeeldingen/onderwerpen/d/duurzame-energie.jpg",
+      "confidence": "medium",
+      "notes": "Sustainable energy hero — best quality (310K). Use as primary cover slide."
+    },
+    {
+      "file": "photo-cover-02.jpg",
+      "roles": ["cover"],
+      "mood": "bold",
+      "orientation": "landscape",
+      "source_url": "https://www.rijksoverheid.nl/binaries/widescreen/content/gallery/rijksoverheid/content-afbeeldingen/ministeries/series/hero---nieuw/ezk-hero-juli2019.jpg",
+      "confidence": "medium",
+      "notes": "Solar panels / renewable energy — EZK ministry hero, 1200×480px."
+    },
+    {
+      "file": "photo-section-01.png",
+      "roles": ["section"],
+      "mood": "policy",
+      "orientation": "landscape",
+      "source_url": "https://www.rijksoverheid.nl/binaries/medium/content/gallery/rijksoverheid/content-afbeeldingen/ministeries/ezk/2022/4_europa_600x400.png",
+      "confidence": "medium",
+      "notes": "EU/European policy graphic. Good for international/EU strategy slides."
+    },
+    {
+      "file": "photo-section-02.jpg",
+      "roles": ["section"],
+      "mood": "industrial",
+      "orientation": "landscape",
+      "source_url": "https://www.rijksoverheid.nl/binaries/medium/content/gallery/rijksoverheid/content-afbeeldingen/ministeries/ezk/2025/uitgelicht-maasvlakte.jpg",
+      "confidence": "medium",
+      "notes": "Maasvlakte industrial port (2025). Energy infrastructure & logistics context."
+    },
+    {
+      "file": "photo-section-03.jpg",
+      "roles": ["section"],
+      "mood": "editorial",
+      "orientation": "landscape",
+      "source_url": "https://www.rijksoverheid.nl/binaries/medium/content/gallery/rijksoverheid/content-afbeeldingen/ministeries/series/overzichtspagina---nieuw/ezk-overzicht-juli2019.jpg",
+      "confidence": "medium",
+      "notes": "EZK ministry overview editorial."
+    },
+    {
+      "file": "photo-section-04.jpg",
+      "roles": ["section"],
+      "mood": "human",
+      "orientation": "landscape",
+      "source_url": "https://www.rijksoverheid.nl/binaries/medium/content/gallery/rijksoverheid/banner-afbeeldingen/onderwerpen/e/energie-thuis-450.jpg",
+      "confidence": "medium",
+      "notes": "Residential/consumer energy — relatable human angle."
+    }
+  ]
+}
