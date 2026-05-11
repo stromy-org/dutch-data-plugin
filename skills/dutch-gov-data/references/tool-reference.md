@@ -32,8 +32,15 @@ One-call content retrieval with auto-resolution and format selection.
 |-------|------|-------|
 | `input` | string | Required. Same as resolve_identifier input |
 | `intent` | string | Default "auto" |
-| `max_chars` | int | Default 10000. Increase for large texts. |
+| `max_chars` | int | Default 50000. Increase for large texts. |
 | `offset` | int | Default 0. Use `next_offset` from pagination for next chunk. |
+| `complete` | bool | Default false. If true, auto-paginates internally until full document (capped at 200k chars). Use for summarization/analysis. |
+| `toc_only` | bool | Default false. If true, returns section headings only (no text). Cheap first look at large documents — then call again with `section=`. |
+| `section` | string? | If provided, returns only sections whose heading contains this substring (case-insensitive). Use after `toc_only` probe to read a targeted slice. |
+
+Always check `pagination.truncated`. If `true`, use `complete=True` or paginate with `offset=next_offset` before synthesizing. `total_chars` gives full document size.
+
+For documents >100k chars: use `toc_only=True` first to get headings, then `section=<heading>` to fetch the relevant part. For >200k or multi-document tasks, delegate to a sub-agent.
 
 Returns content envelope with `source`, `identifier`, `format`, `parser`, `title`, `content.text_chunk`, `pagination`, `references`, `warnings`.
 
@@ -65,9 +72,10 @@ Direct KOOP official publication fetch.
 |-------|------|-------|
 | `identifier` | string | Required. kst-*, ah-tk-*, h-tk-*, stb-*, stcrt-* |
 | `format` | string | "auto" (default), "xml", "html", "pdf" |
-| `max_chars` | int | Default 10000 |
+| `max_chars` | int | Default 50000 |
 | `offset` | int | Default 0 |
-| `section` | string? | Section filter hint |
+| `toc_only` | bool | Default false. Returns section headings only — no text. |
+| `section` | string? | If provided, filters returned text to sections whose heading contains this substring (case-insensitive). |
 | `include_references` | bool | Default true — return extref identifiers |
 | `include_attachments` | bool | Default false — return blg-* identifiers |
 
@@ -95,12 +103,14 @@ TK debate transcript with speaker attribution.
 | `verslag_id` | string? | TK Verslag GUID (most precise) |
 | `vergadering_id` | string? | TK Vergadering GUID |
 | `htk_identifier` | string? | h-tk-* KOOP identifier |
-| `keyword` | string? | Keyword search across Activiteit |
+| `keyword` | string? | Keyword search across Activiteit (see note below) |
 | `max_turns` | int | Default 50 — activiteithoofd blocks per page |
 | `max_chars` | int | Default 15000 |
 | `offset` | int | Default 0 |
 
 Returns `meeting` metadata + `activiteiten` (with topic_blocks) + `turns_page` (paginated blocks with speaker info and text). Note: VLOS Tussenpublicaties may have sparse text; Voorpublicaties have none.
+
+**Keyword resolution limitation**: `keyword` searches Activiteit subjects, but many Activiteiten don't carry a `Vergadering_Id`, so the keyword→Verslag chain often fails. Preferred path: use `tk_search(entity="Verslag", top=N)` to discover `verslag_id` values, then pass `verslag_id=` directly.
 
 ### `fetch_rijksoverheid_document` (advanced)
 Rijksoverheid document content.
@@ -122,7 +132,7 @@ Attachment fetch with XML→PDF fallback.
 | `max_chars` | int | Default 10000 |
 | `offset` | int | Default 0 |
 
-**Note**: blg-* XML is frequently 404. The tool automatically falls back to FRBR PDF. If `pdf_quality` is `ocr_needed`, the document has no embedded text.
+**Note**: blg-* XML is frequently 404. The tool falls back to FRBR PDF. If `pdf_quality` is `ocr_needed` or `unavailable`, the PDF has no text layer (common for recent beslisnota PDFs which are image-based scans). In that case, try `fetch_rijksoverheid_document` or a direct TK document URL as alternative sources.
 
 ### `fetch_toezeggingen` (advanced)
 Ministerial commitment search.
@@ -138,7 +148,7 @@ Returns Toezegging records with Nummer, Tekst (the actual field — not TekstToe
 
 ---
 
-**Escalation path**: For content requests, start with `document_deep_read`. Fall back to specific fetch tools when you need article targeting (`fetch_bwb_text`), transcript speaker turns (`fetch_tk_transcript`), or attachment handling (`fetch_attachment`).
+**Escalation path**: For content requests, start with `document_deep_read`. Use `toc_only=True` first for large documents, then `section=` for targeted reads. Use `complete=True` for full documents up to 200k chars. Fall back to specific fetch tools when you need article targeting (`fetch_bwb_text`), transcript speaker turns (`fetch_tk_transcript(verslag_id=...)`), or attachment handling (`fetch_attachment`).
 
 For metadata-only discovery, start with unified tools. Fall back to native tools when you need:
 - Filtering on fields the unified tool doesn't expose (e.g., `tk_search` with OData `$filter` on date ranges, entity relationships)
@@ -394,6 +404,9 @@ Returns identification codes (KVK, OIN, RSIN), abbreviation, and responsible min
 - Consider `list_factions` + `list_committees` + `search_votes` for political context snapshots.
 - Use `get_member` + `search_activities` + `search_votes` for actor research, but treat former MPs as historical profiles unless current faction context is explicit.
 - Prefer `roo_list_organizations` + `roo_get_organization` when you need canonical organization normalization across sources.
+- **Content chain**: `resolve_identifier` → `document_deep_read` for direct document text.
+- **Large document**: `document_deep_read(toc_only=True)` → identify headings → `document_deep_read(section=<heading>)` for targeted reads. Use `complete=True` for full docs up to 200k chars. Delegate to sub-agent for >200k or multi-document extraction.
+- **Vote isolation (single motion)**: Use `search_votes(dossier_number=...)` for faction-level vote results. **Do not** use `tk_search(Stemming)` with a navigation-property filter like `contains(Besluit/Zaak/Onderwerp, '...')` — this returns HTTP 400 from the TK API. If you need to identify which vote record corresponds to a specific motion, filter by date range or combine with a `koop_search` on the dossier sub-number.
 
 ## Parallelization groups
 
