@@ -1,13 +1,25 @@
 ---
 name: dutch-gov-data
-description: "Track Dutch public affairs signals across Tweede Kamer, Rijksoverheid, KOOP publications, BWB legislation, Wetgevingskalender, and ROO organizations using the `nl-gov-data` MCP. Supports twelve workflows: topic monitoring, dossier tracking, actor briefs, committee watch, legislative scan, ministry narrative, parliamentary landscape snapshot, legislation lookup, legislative calendar watch, law-to-dossier brief, organization lookup, and exploratory MCP testing. Produces structured JSON shaped for downstream Stromy workflows with `workflow_type`, `query_params`, `results`, and `metadata`. Use this skill whenever the user asks about Dutch parliament activity, Tweede Kamer dossiers, Dutch government policy signals, kamerstukken, dossier numbers, Dutch MPs, faction composition, ministry narrative, Dutch laws, legislation, wetgeving, wetgevingskalender, government organizations, or wants a Netherlands public-affairs brief, monitor, tracker, or timeline."
+description: "Track Dutch public affairs signals across Tweede Kamer, Rijksoverheid, KOOP publications, BWB legislation, Wetgevingskalender, and ROO organizations using the `nl-gov-data` MCP. Supports twelve workflows: topic monitoring, dossier tracking, actor briefs, committee watch, legislative scan, ministry narrative, parliamentary landscape snapshot, legislation lookup, legislative calendar watch, law-to-dossier brief, organization lookup, and exploratory MCP testing. Now also supports content deep-reading: fetching and quoting actual document text (motions, bills, letters, debate transcripts, law articles, attachments). Produces structured JSON shaped for downstream Stromy workflows with `workflow_type`, `query_params`, `results`, and `metadata`. Use this skill whenever the user asks about Dutch parliament activity, Tweede Kamer dossiers, Dutch government policy signals, kamerstukken, dossier numbers, Dutch MPs, faction composition, ministry narrative, Dutch laws, legislation, wetgeving, wetgevingskalender, government organizations, OR wants to read/quote/summarize a specific Dutch government document, transcript, law article, or attachment."
 ---
 
 # Dutch Government Data
 
 ## Overview
 
-This skill is the orchestration layer over the `nl-gov-data` MCP. The MCP provides the normalized data surface; this skill turns that surface into workflow-ready public-affairs outputs. The hosted remote FastMCP server (`nl-gov-data` as configured in `.mcp.json`) is the only runtime — no local stdio fallback is available in this plugin.
+This skill is the orchestration layer over the `nl-gov-data` MCP. The MCP provides both a metadata surface and a content layer; this skill turns that surface into workflow-ready public-affairs outputs. The hosted remote FastMCP server (`nl-gov-data` as configured in `.mcp.json`) is the only runtime — no local stdio fallback is available in this plugin.
+
+**The MCP now supports full content retrieval.** After metadata discovery, you can fetch and quote the actual text of:
+- Kamerstukken (motions, bills, letters, memorie van toelichting)
+- Aanhangsel van de Handelingen (kamervragen and answers)
+- Handelingen (debate transcripts)
+- Consolidated legislation text (BWB)
+- Ministerial commitments (Toezeggingen)
+- Debate transcripts with speaker attribution (VLOS)
+- Rijksoverheid policy documents
+- Attachments and beslisnota's (including PDF-only)
+
+**Metadata titles are not evidence. Only quote from content tools.**
 
 Use this skill when the user needs one of these outcomes:
 
@@ -47,9 +59,10 @@ All exposed data should be treated as public/open government data, but chaining 
 These are soft preferences for efficient research, not hard rules:
 
 - Prefer `get_dossier_timeline` + `koop_search(w.dossiernummer==...)` + `get_legislative_brief(dossier_number=...)` when chronology and official publications matter most.
-- Consider `list_factions` + `list_committees` + `search_votes` for parliamentary context. `search_votes` can expose richer nested source metadata than the normalized fields alone; treat that as analyst depth, not a guaranteed minimal contract.
-- Use `get_member` + `search_activities(actor=...)` + `search_votes(faction=...)` for actor briefs, but prefer caution for former MPs and rely on historical framing when `metadata.Functie` says `"Oud Kamerlid"`.
-- Prefer `roo_list_organizations` + `roo_get_organization` when normalizing ministries across Rijksoverheid, WGK, and BWB. Use the full TOOI URI returned by the list call when available.
+- Consider `list_factions` + `list_committees` + `search_votes` for parliamentary context.
+- Use `get_member` + `search_activities(actor=...)` + `search_votes(faction=...)` for actor briefs, but prefer caution for former MPs.
+- Prefer `roo_list_organizations` + `roo_get_organization` when normalizing ministries.
+- **Use `document_deep_read` after discovery** when the user wants actual text — not just metadata.
 
 | Chain | Tools | Best for |
 |-------|-------|----------|
@@ -57,6 +70,38 @@ These are soft preferences for efficient research, not hard rules:
 | topic | `search_documents` + `search_activities` + `search_legislation` | Policy monitoring across parliament, government narrative, and law pipeline. |
 | actor | `get_member` + `search_activities` + faction-level `search_votes` | MP/actor briefs with activity and faction proxy vote context. |
 | ministry | `roo_list_organizations` + `rijksoverheid_search` + `wetgevingskalender_search` | Responsible-organization normalization and ministry narrative/pipeline scans. |
+| vote_check | `tk_search(Stemming)` with expand chain + `tk_get` | Isolating the vote outcome for a specific motion within a large dossier. |
+| **content_deep_read** | `resolve_identifier` → `document_deep_read` | Reading and quoting actual document text after metadata discovery. |
+| **motion_brief** | `document_deep_read` + `tk_search(Stemming)` + `fetch_toezeggingen` + reference follow-up | Motion text, outcome, commitments, and government follow-up. |
+| **law_text** | `bwb_search` → `fetch_bwb_text(article=...)` | Enacted law article and consolidated legal text. |
+| **debate_transcript** | `search_activities`/`tk_search(Verslag)` → `fetch_tk_transcript` | Who said what in plenary/committee context. |
+| **attachment_read** | `extract_document_references` → `fetch_attachment` | Beslisnota's, reports, appendices, and PDF-only evidence. |
+
+### vote_check chain — isolating a single motion's vote
+
+`search_votes` filters by dossier, date, and faction, but not by motion content. For large dossiers (e.g., 29435 Nota Ruimte: 646+ vote records), this makes it impossible to isolate one motion's outcome without scanning all records.
+
+**Solution**: Use `tk_search` on entity `Stemming` with a deep expand chain and subject filter:
+
+```
+tk_search(
+  entity="Stemming",
+  expand=["Besluit($expand=Zaak($expand=Kamerstukdossier))"],
+  filter="contains(Besluit/Zaak/Onderwerp, '<zoekterm>')",
+  top=50
+)
+```
+
+This returns only the per-faction vote records for motions whose `Onderwerp` contains the search term. Key fields in the response:
+
+- `Besluit/BesluitSoort`: directly gives `"Stemmen - aangenomen"` or `"Stemmen - verworpen"`
+- `FractieGrootte`, `ActorFractie`: faction name and size at time of vote
+- `Soort`: `"Voor"` or `"Tegen"` per faction record
+- `Besluit/Zaak/Onderwerp`: the motion subject line for verification
+
+**When to use**: Whenever the user asks about the outcome of a specific motion, amendment, or vote within a dossier — especially when the dossier is large or contains many sub-items. Prefer this over `search_votes(dossier_number=...)` when you need to isolate a single item.
+
+**Combine with**: `koop_search(query='w.dossiernummer==<nr> AND w.dossierondernummer==<sub>')` to resolve the official publication metadata for the same motion.
 
 For discovery, prefer this skill, the MCP README, MCP resources, and MCP introspection over external `tool_search`, which may not enumerate this MCP reliably.
 
@@ -68,6 +113,32 @@ For discovery, prefer this skill, the MCP README, MCP resources, and MCP introsp
 - Fail open. If one MCP call partially fails, still return usable output with `metadata.warnings`.
 - Separate retrieval from interpretation. The workflow output may include a short synthesis, but the retrieved records remain primary.
 - Treat tool errors as findings. Record them and continue with the next bounded call instead of abandoning the whole exploration.
+
+### Content deep-read: when to fetch actual text
+
+The MCP now exposes content tools. Use them whenever the user wants to read, quote, or reason about specific document content — not just discover what documents exist.
+
+**When to use content tools:**
+
+| User says | Use |
+|-----------|-----|
+| "what does it say", "quote", "summarize this document" | `document_deep_read` |
+| "what are the key provisions of article N" | `fetch_bwb_text(article=N)` |
+| "what did MP X say in debate Y" | `fetch_tk_transcript` |
+| "what did the minister commit to" | `fetch_toezeggingen` |
+| "what attachments/beslisnota's are there" | `extract_document_references` → `fetch_attachment` |
+
+**Default content chain:**
+1. `resolve_identifier(user_input)` — normalize to canonical identifier
+2. `document_deep_read(resolved_identifier)` — fetch best available format
+3. If needed: `extract_document_references(identifier)` → `document_deep_read(attachment)`
+
+**Content tool cautions:**
+- Only quote from `content.text_chunk` in the tool result — never from metadata titles
+- If `pagination.truncated` is true, use `offset=next_offset` to read the next chunk
+- If `pdf_quality` is `ocr_needed` or `empty`, state that the PDF text was unreliable
+- blg-* attachments are frequently PDF-only; use `fetch_attachment("blg-...")` which handles the XML→PDF fallback
+- TekstToezegging does not exist as an OData field — the actual field is `Tekst`
 
 ### Sample-then-deepen
 

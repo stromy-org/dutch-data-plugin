@@ -4,15 +4,143 @@ Concise inventory of all `nl-gov-data` MCP tools, their parameters, query semant
 
 ## Tool layers
 
-The MCP exposes two layers:
+The MCP exposes three layers:
 
 | Layer | Tools | When to use |
 |-------|-------|-------------|
-| **Unified** | `search_documents`, `search_activities`, `search_votes`, `get_member`, `get_dossier_timeline`, `search_legislation`, `get_legislative_brief` | Default for all workflows. Normalized output across sources. |
-| **Native** | `tk_search`, `tk_get`, `tk_count`, `koop_search`, `rijksoverheid_search`, `rijksoverheid_get`, `bwb_search`, `bwb_get`, `wetgevingskalender_search`, `wetgevingskalender_get`, `roo_list_organizations`, `roo_get_organization` | When you need query power the unified layer lacks: OData filters, specific entity sets, CQL queries, single-record fetches, legislation lookup, org enrichment. |
+| **Content** | `resolve_identifier`, `document_deep_read`, `extract_document_references`, `document_formats`, `fetch_official_publication`, `fetch_bwb_text`, `fetch_tk_transcript`, `fetch_rijksoverheid_document`, `fetch_attachment`, `fetch_toezeggingen` | When the user wants to read, quote, or reason about actual document content. Start with `document_deep_read` for most requests. |
+| **Unified** | `search_documents`, `search_activities`, `search_votes`, `get_member`, `get_dossier_timeline`, `search_legislation`, `get_legislative_brief` | Default for discovery and metadata workflows. Normalized output across sources. |
+| **Native** | `tk_search`, `tk_get`, `tk_count`, `koop_search`, `rijksoverheid_search`, `rijksoverheid_get`, `bwb_search`, `bwb_get`, `wetgevingskalender_search`, `wetgevingskalender_get`, `roo_list_organizations`, `roo_get_organization` | When you need query power the unified layer lacks: OData filters, specific entity sets, CQL queries, single-record fetches. |
 | **Reference lists** | `list_factions`, `list_committees`, `list_ministries`, `list_subjects` | Context lookups: resolve faction names, committee abbreviations, ministry IDs, policy subject labels. |
 
-**Escalation path**: Start with unified tools. Fall back to native tools when you need:
+## Content tools
+
+### `resolve_identifier` (primary)
+Turn any user input into a fetchable Dutch government identifier.
+
+| Param | Type | Notes |
+|-------|------|-------|
+| `input` | string | Required. Accepts: kst-*, ah-tk-*, h-tk-*, blg-*, stb-*, stcrt-*, BWBR*, BWBV*, TK GUIDs, KOOP/FRBR URLs, dossier sub-notation (36228-3) |
+| `source_hint` | string? | Optional hint if source is ambiguous |
+
+Returns `resolved[]` with `source`, `identifier`, `confidence`, `resolution_path`.
+
+### `document_deep_read` (primary)
+One-call content retrieval with auto-resolution and format selection.
+
+| Param | Type | Notes |
+|-------|------|-------|
+| `input` | string | Required. Same as resolve_identifier input |
+| `intent` | string | Default "auto" |
+| `max_chars` | int | Default 10000. Increase for large texts. |
+| `offset` | int | Default 0. Use `next_offset` from pagination for next chunk. |
+
+Returns content envelope with `source`, `identifier`, `format`, `parser`, `title`, `content.text_chunk`, `pagination`, `references`, `warnings`.
+
+### `extract_document_references` (primary)
+Extract all references and attachments from a document.
+
+| Param | Type | Notes |
+|-------|------|-------|
+| `identifier_or_url` | string | Required. KOOP identifier or URL |
+| `include_attachments` | bool | Default true |
+
+Returns `references.koop`, `references.bwb`, `references.attachments` (blg-*), `references.all`.
+
+### `document_formats` (advanced)
+Format inventory before fetching.
+
+| Param | Type | Notes |
+|-------|------|-------|
+| `identifier` | string? | KOOP identifier |
+| `tk_document_id` | string? | TK Document GUID |
+| `tk_document_versie_id` | string? | TK DocumentVersie GUID |
+
+Returns `formats[]` with type (Xml/Pdf/Html/Odt), content_type, size_bytes, url, fetch_strategy.
+
+### `fetch_official_publication` (advanced)
+Direct KOOP official publication fetch.
+
+| Param | Type | Notes |
+|-------|------|-------|
+| `identifier` | string | Required. kst-*, ah-tk-*, h-tk-*, stb-*, stcrt-* |
+| `format` | string | "auto" (default), "xml", "html", "pdf" |
+| `max_chars` | int | Default 10000 |
+| `offset` | int | Default 0 |
+| `section` | string? | Section filter hint |
+| `include_references` | bool | Default true — return extref identifiers |
+| `include_attachments` | bool | Default false — return blg-* identifiers |
+
+Parser dispatch: kst-* → OP XML kamerstuk parser; ah-tk-* → aanhangsel parser (vragen/antwoorden); h-tk-* → handeling parser; stb-*/stcrt-* → generic OP XML parser.
+
+### `fetch_bwb_text` (advanced)
+BWB consolidated law text.
+
+| Param | Type | Notes |
+|-------|------|-------|
+| `identifier` | string | Required. BWBR*, BWBV*, BWBA* |
+| `toestand_url` | string? | Direct locatie_toestand URL from BWB search |
+| `article` | string? | Article number (e.g. "1", "24") |
+| `chapter` | string? | Chapter hint |
+| `max_chars` | int | Default 10000 |
+| `offset` | int | Default 0 |
+
+**Critical**: Never construct date URLs manually — always use the `locatie_toestand` URL from `bwb_search` results. Without `toestand_url`, the tool calls `bwb_search` and uses the returned `locatie_toestand`.
+
+### `fetch_tk_transcript` (advanced)
+TK debate transcript with speaker attribution.
+
+| Param | Type | Notes |
+|-------|------|-------|
+| `verslag_id` | string? | TK Verslag GUID (most precise) |
+| `vergadering_id` | string? | TK Vergadering GUID |
+| `htk_identifier` | string? | h-tk-* KOOP identifier |
+| `keyword` | string? | Keyword search across Activiteit |
+| `max_turns` | int | Default 50 — activiteithoofd blocks per page |
+| `max_chars` | int | Default 15000 |
+| `offset` | int | Default 0 |
+
+Returns `meeting` metadata + `activiteiten` (with topic_blocks) + `turns_page` (paginated blocks with speaker info and text). Note: VLOS Tussenpublicaties may have sparse text; Voorpublicaties have none.
+
+### `fetch_rijksoverheid_document` (advanced)
+Rijksoverheid document content.
+
+| Param | Type | Notes |
+|-------|------|-------|
+| `id_or_url` | string | Required. UUID or rijksoverheid.nl URL |
+| `include_files` | bool | Default true — return file inventory |
+| `max_chars` | int | Default 10000 |
+| `offset` | int | Default 0 |
+
+### `fetch_attachment` (advanced)
+Attachment fetch with XML→PDF fallback.
+
+| Param | Type | Notes |
+|-------|------|-------|
+| `identifier_or_url` | string | Required. blg-* or direct URL |
+| `preferred_format` | string | "auto" (default), "xml", "pdf" |
+| `max_chars` | int | Default 10000 |
+| `offset` | int | Default 0 |
+
+**Note**: blg-* XML is frequently 404. The tool automatically falls back to FRBR PDF. If `pdf_quality` is `ocr_needed`, the document has no embedded text.
+
+### `fetch_toezeggingen` (advanced)
+Ministerial commitment search.
+
+| Param | Type | Notes |
+|-------|------|-------|
+| `keyword` | string? | Searches Tekst, Naam, Functie |
+| `ministry` | string? | Contains-match on Ministerie |
+| `status` | string? | "Openstaand", "Voldaan", "Niet nagekomen" |
+| `max_results` | int | Default 50 |
+
+Returns Toezegging records with Nummer, Tekst (the actual field — not TekstToezegging which does not exist), Naam, Functie, Ministerie, Status, DatumNakoming.
+
+---
+
+**Escalation path**: For content requests, start with `document_deep_read`. Fall back to specific fetch tools when you need article targeting (`fetch_bwb_text`), transcript speaker turns (`fetch_tk_transcript`), or attachment handling (`fetch_attachment`).
+
+For metadata-only discovery, start with unified tools. Fall back to native tools when you need:
 - Filtering on fields the unified tool doesn't expose (e.g., `tk_search` with OData `$filter` on date ranges, entity relationships)
 - A specific TK entity set not covered by unified tools (e.g., `Fractie`, `Commissie`, `Kamerstukdossier`)
 - Raw KOOP CQL for precise publication retrieval

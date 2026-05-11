@@ -188,9 +188,33 @@ Rich source-native `metadata` is useful for analyst depth and traceability, but 
 }
 ```
 
+## Content evidence objects
+
+When content tools are used (document_deep_read, fetch_official_publication, etc.), results should include a `content_evidence` field for any quoted passage:
+
+```json
+{
+  "quote": "Allen die zich in Nederland bevinden, worden in gelijke gevallen gelijk behandeld.",
+  "source": "bwb",
+  "identifier": "BWBR0001840",
+  "title": "Grondwet",
+  "section": "Artikel 1",
+  "url": "https://repository.officiele-overheidspublicaties.nl/bwb/BWBR0001840/...",
+  "retrieved_at": "2026-05-11T00:00:00Z"
+}
+```
+
+**Rules for content evidence:**
+- Only quote from `content.text_chunk` returned by content tools — never from metadata titles or search snippets
+- Always include `source`, `identifier`, and `url`
+- When `pagination.truncated` is true, note that the text may continue beyond the quoted passage
+- If `pdf_quality` is `ocr_needed` or `empty`, add to `metadata.warnings`: "PDF text extraction was unreliable for [identifier]"
+- If a document is missing (error.kind == "not_found"), report it in `metadata.warnings` — do not pretend it was read
+
 ## Contract rules
 
 - Keep `results` primary and `metadata` explanatory.
 - Preserve MCP warnings verbatim where possible.
 - Do not hide missing data. Put the gap in `metadata.warnings` or `metadata.assumptions`.
 - Keep provenance fields from MCP outputs when they matter to downstream traceability.
+- Quote only from content tools, never from metadata fields like title or summary.
